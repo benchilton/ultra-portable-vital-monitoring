@@ -1,0 +1,21 @@
+compatible: "ad469x,custom-settings"
+description: "AD469X custom settings"
+properties:
+  spi-frequency-reg:
+    type: int
+    required: true
+  spi-frequency-cnv:
+    type: int
+    required: true
+  cs-delay:
+    type: int
+    required: true
+  adc-reset-gpios:
+    type: phandle-array
+    required: false
+  adc-busy-gpios:
+    type: phandle-array
+    required: false
+  adc-convert-gpios:
+    type: phandle-array
+    required: false

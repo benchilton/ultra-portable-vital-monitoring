@@ -1,0 +1,58 @@
+/**
+ * AD469X Defines
+ */
+
+/**OSRs**/
+#define AD469X_OSR_1           0x00
+#define AD469X_OSR_4           0x01
+#define AD469X_OSR_16          0x02
+#define AD469X_OSR_64          0x03
+
+#define AD469X_CHANNEL_0_MASK  0x0001
+#define AD469X_CHANNEL_1_MASK  0x0002
+#define AD469X_CHANNEL_2_MASK  0x0004
+#define AD469X_CHANNEL_3_MASK  0x0008
+#define AD469X_CHANNEL_4_MASK  0x0010
+#define AD469X_CHANNEL_5_MASK  0x0020
+#define AD469X_CHANNEL_6_MASK  0x0040
+#define AD469X_CHANNEL_7_MASK  0x0080
+#define AD469X_CHANNEL_8_MASK  0x0100
+#define AD469X_CHANNEL_9_MASK 0x0200
+#define AD469X_CHANNEL_10_MASK 0x0400
+#define AD469X_CHANNEL_11_MASK 0x0800
+#define AD469X_CHANNEL_12_MASK 0x1000
+#define AD469X_CHANNEL_13_MASK 0x2000
+#define AD469X_CHANNEL_14_MASK 0x4000
+#define AD469X_CHANNEL_15_MASK 0x8000
+
+
+#define AD469X_CHANNEL_0       0x00
+#define AD469X_CHANNEL_1       0x01
+#define AD469X_CHANNEL_2       0x02
+#define AD469X_CHANNEL_3       0x03
+#define AD469X_CHANNEL_4       0x04
+#define AD469X_CHANNEL_5       0x05
+#define AD469X_CHANNEL_6       0x06
+#define AD469X_CHANNEL_7       0x07
+#define AD469X_CHANNEL_8       0x08
+#define AD469X_CHANNEL_9      0x09
+#define AD469X_CHANNEL_10      0x0A
+#define AD469X_CHANNEL_11      0x0D
+#define AD469X_CHANNEL_12      0x0C
+#define AD469X_CHANNEL_13      0x0D
+#define AD469X_CHANNEL_14      0x0E
+#define AD469X_CHANNEL_15      0x0F
+
+#define AD469X_PAIRED_REFGND   0x00
+#define AD469X_PAIRED_COM      0x01
+
+/**
+* Battery Guage defines
+**/
+
+
+#define I2C_SPEED_STANDARD  (0x1U)
+#define I2C_SPEED_FAST      (0x2U)
+#define I2C_SPEED_FAST_PLUS (0x3U)
+#define I2C_SPEED_HIGH      (0x4U)
+#define I2C_SPEED_ULTRA     (0x5U)

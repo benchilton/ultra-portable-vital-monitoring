@@ -1,0 +1,315 @@
+/dts-v1/;
+#include <nordic/nrf52832_qfaa.dtsi>
+#include "vital_monitor_nrf52832-defines.dtsi"
+#include "vital_monitor_nrf52832-pinctrl.dtsi"
+#include "vital_monitor-defines.dtsi"
+
+/ {
+	model = "Vital sign monitor using nrf52832";
+	compatible = "nordic,nrf52-dk-nrf52832";
+
+	chosen {
+		zephyr,console = &uart0;
+		zephyr,shell-uart = &uart0;
+		zephyr,uart-mcumgr = &uart0;
+		zephyr,bt-mon-uart = &uart0;
+		zephyr,bt-c2h-uart = &uart0;
+		zephyr,sram = &sram0;
+		zephyr,flash = &flash0;
+		zephyr,code-partition = &slot0_partition;
+        zephyr,display = &afl240320a0;
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		led0: led_0 {
+			gpios = <&gpio0 31 GPIO_ACTIVE_LOW>;
+			label = "Green LED 0";
+		};
+		led1: led_1 {
+			gpios = <&gpio0 30 GPIO_ACTIVE_LOW>;
+			label = "Green LED 1";
+		};
+		led2: led_2 {
+			gpios = <&gpio0 29 GPIO_ACTIVE_LOW>;
+			label = "Green LED 2";
+		};
+		led3: led_3 {
+			gpios = <&gpio0 28 GPIO_ACTIVE_LOW>;
+			label = "Green LED 3";
+		};
+	};
+/*
+	pwmleds {
+		compatible = "pwm-leds";
+		pwm_led0: pwm_led_0 {
+			pwms = <&pwm0 0 PWM_MSEC(20) PWM_POLARITY_INVERTED>;
+		};
+	};
+	buttons {
+		compatible = "gpio-keys";
+		button0: button_0 {
+			gpios = <&gpio0 13 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			label = "Push button switch 0";
+		};
+		button1: button_1 {
+			gpios = <&gpio0 14 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			label = "Push button switch 1";
+		};
+		button2: button_2 {
+			gpios = <&gpio0 15 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			label = "Push button switch 2";
+		};
+		button3: button_3 {
+			gpios = <&gpio0 16 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			label = "Push button switch 3";
+		};
+	};
+*/
+
+	/* These aliases are provided for compatibility with samples */
+	aliases {
+		led0 = &led0;
+		led1 = &led1;
+		led2 = &led2;
+		led3 = &led3;
+        /*
+		pwm-led0 = &pwm_led0;
+		sw0 = &button0;
+		sw1 = &button1;
+		sw2 = &button2;
+		sw3 = &button3;
+        mcuboot-button0 = &button0;
+         */
+		bootloader-led0 = &led0;
+		mcuboot-led0 = &led0;
+		watchdog0 = &wdt0;
+	};
+};
+
+&adc {
+	status = "okay";
+};
+
+&gpiote {
+	status = "okay";
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+arduino_serial: &uart0 {
+	status = "okay";
+	compatible = "nordic,nrf-uarte";
+	current-speed = <115200>;
+	pinctrl-0 = <&uart0_default>;
+	pinctrl-1 = <&uart0_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&i2c1 {
+	compatible = "nordic,nrf-twi";
+	/* Cannot be used together with spi1. */
+	/* status = "okay"; */
+	pinctrl-0 = <&i2c1_default>;
+	pinctrl-1 = <&i2c1_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&pwm0 {
+	status = "okay";
+	pinctrl-0 = <&pwm0_default>;
+	pinctrl-1 = <&pwm0_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&i2c0 {
+    compatible = "nordic,nrf-twim";
+    status = "okay";
+    pinctrl-0 = <&i2c0_default>;
+    pinctrl-1 = <&i2c0_sleep>;
+    pinctrl-names = "default", "sleep";
+
+    lc709204f: i2c-dev-lc709204f@0 {
+        label = "LC709204F";
+        reg = <0>;
+
+        /* Configure other devices device properties as needed.*/
+        properties {
+            compatible = "lc709204f,custom-settings";
+            i2c-frequency = <I2C_SPEED_STANDARD>;
+            slave-address = <0x0B>;
+            /*Define which GPIO's are to be used as CS for the ad469*/
+            /*alarm-b-gpios = <&gpio0 22 GPIO_ACTIVE_HIGH>;*/
+        };
+
+    };
+
+};
+
+&spi0 {
+	compatible = "nordic,nrf-spi";
+	/* Cannot be used together with i2c0. */
+	/* status = "okay"; */
+	pinctrl-0 = <&spi0_default>;
+	pinctrl-1 = <&spi0_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&spi1 {
+	compatible = "nordic,nrf-spi";
+	status = "okay";
+	pinctrl-0 = <&spi1_default>;
+	pinctrl-1 = <&spi1_sleep>;
+	pinctrl-names = "default", "sleep";
+
+    cs-gpios = <&gpio0 6 GPIO_ACTIVE_LOW>; /* D10 */
+
+    ad469x: spi-dev-ad469x@0 {
+
+        /*compatible = "ad469x,custom-settings";*/
+        label = "AD469x";
+        reg = <0>;
+
+        /* Configure other SPI device properties as needed.*/
+        properties {
+            compatible = "ad469x,custom-settings";
+            spi-frequency-reg = <4000000>;
+            spi-frequency-cnv = <4000000>;
+            cs-delay          = <0>;
+            /*Define which GPIO's are to be used as CS for the ad469*/
+            adc-reset-gpios   = <&gpio0 3 GPIO_ACTIVE_HIGH>;
+            adc-busy-gpios    = <&gpio0 4 GPIO_ACTIVE_HIGH>;
+            adc-convert-gpios = <&gpio0 6 GPIO_ACTIVE_HIGH>;
+        };
+
+    };
+
+
+};
+
+&spi2 {
+	compatible = "nordic,nrf-spi";
+	status = "okay";
+	pinctrl-0 = <&spi2_default>;
+	pinctrl-1 = <&spi2_sleep>;
+	pinctrl-names = "default", "sleep";
+
+    cs-gpios = <&gpio0 15 GPIO_ACTIVE_LOW>; /* D10 */
+
+    afl240320a0: display-afl240320a0@0 {
+        compatible = "sitronix,st7789v";
+        spi-max-frequency = <4000000>;
+        reg = <0>;
+        cmd-data-gpios = <&gpio0 20 GPIO_ACTIVE_LOW>;	/* D9 */
+        reset-gpios = <&gpio0 16 GPIO_ACTIVE_LOW>;	/* D8 */
+
+        width = <320>;
+        height = <240>;
+        x-offset = <0>;
+        y-offset = <0>;
+        vcom = <0x2b>;
+        gctrl = <0x35>;
+        vrhs = <0x0f>;
+        vdvs = <0x20>;
+        mdac = <0x60>;
+        gamma = <0x01>;
+        colmod = <0x55>;
+        lcm = <0x2c>;
+        porch-param = [0c 0c 00 33 33];
+        cmd2en-param = [5a 69 02 01];
+        pwctrl1-param = [52 a1];
+        pvgam-param = [D0 00 02 07 0B 1A 31 54 40 29 12 12 12 17];
+        nvgam-param = [D0 00 02 07 05 15 2D 44 44 1C 18 16 1C 1D];
+        ram-param = [00 F8];
+        rgb-param = [CD 08 14];
+
+        properties {
+            compatible = "afl240320a0,custom-settings";
+            blk-gpios  = <&gpio0 17 GPIO_ACTIVE_HIGH>;
+            wake-gpios = <&gpio0 10 GPIO_ACTIVE_HIGH>;
+            enable-gpios = <&gpio0 19 GPIO_ACTIVE_HIGH>;
+            pwms       = <&pwm0 0 PWM_MSEC(20) PWM_POLARITY_INVERTED>;
+            pwm-names  = "blk-pwm";
+            spi-frequency = <4000000>;
+        };
+
+    };
+
+
+};
+
+&flash0 {
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 0xc000>;
+		};
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000C000 0x32000>;
+		};
+		slot1_partition: partition@3e000 {
+			label = "image-1";
+			reg = <0x0003E000 0x32000>;
+		};
+		scratch_partition: partition@70000 {
+			label = "image-scratch";
+			reg = <0x00070000 0xa000>;
+		};
+		storage_partition: partition@7a000 {
+			label = "storage";
+			reg = <0x0007a000 0x00006000>;
+		};
+	};
+};
+
+/ {
+    settings {
+
+        afe_settings: afe-custom-settings {
+            compatible   = "afe-settings,custom-settings";
+
+            afe-enable-gpios = <&gpio0 9 GPIO_ACTIVE_LOW>;
+            output-enable-gpios = <&gpio0 2 GPIO_ACTIVE_LOW>;
+
+        };
+
+        ad469x_settings: ad469x-custom-settings {
+            compatible   = "ad469x-sequencer,settings";  /* <--------- */
+            /*Use this to set default settings for channels in the ADC */
+            adc-channels =
+            <VITAL_MONITOR_CHANNEL_TEMPERATURE    AD469X_OSR_64 AD469X_PAIRED_COM >,
+            <VITAL_MONITOR_CHANNEL_HEART_RATE_1   AD469X_OSR_1  AD469X_PAIRED_REFGND >,
+            <VITAL_MONITOR_CHANNEL_HEART_RATE_2   AD469X_OSR_1  AD469X_PAIRED_REFGND >,
+            <VITAL_MONITOR_CHANNEL_BLOOD_OXYGEN_1 AD469X_OSR_1  AD469X_PAIRED_REFGND >,
+            <VITAL_MONITOR_CHANNEL_BLOOD_OXYGEN_2 AD469X_OSR_1  AD469X_PAIRED_REFGND >,
+            <VITAL_MONITOR_CHANNEL_RESPIRATION    AD469X_OSR_1  AD469X_PAIRED_REFGND >,
+            <VITAL_MONITOR_CHANNEL_ACCELERATION_X AD469X_OSR_1  AD469X_PAIRED_COM >,
+            <VITAL_MONITOR_CHANNEL_ACCELERATION_Y AD469X_OSR_1  AD469X_PAIRED_COM >,
+            <VITAL_MONITOR_CHANNEL_ACCELERATION_Z AD469X_OSR_1  AD469X_PAIRED_COM >;
+
+            /*Use this to set the default advanced sequencer channels
+             The order of numbers here start at slot 1*/
+            adv-sequencer-slots =   <VITAL_MONITOR_CHANNEL_TEMPERATURE VITAL_MONITOR_CHANNEL_RESPIRATION
+                                     VITAL_MONITOR_CHANNEL_ACCELERATION_X VITAL_MONITOR_CHANNEL_ACCELERATION_Y
+                                     VITAL_MONITOR_CHANNEL_ACCELERATION_Z VITAL_MONITOR_CHANNEL_HEART_RATE_1
+                                     VITAL_MONITOR_CHANNEL_HEART_RATE_2>;
+        };
+
+        bluetooth_settings: bluetooth-custom-settings {
+
+            compatible = "vital-monitor,bluetooth-settings";
+
+            adv-name = "Vital Sign monitor";
+
+        };
+
+    };
+};

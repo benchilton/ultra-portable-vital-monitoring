@@ -1,0 +1,23 @@
+compatible: "afl240320a0,custom-settings"
+
+description: "AFL240320A0 custom settings"
+
+properties:
+  spi-frequency:
+    type: int
+    required: true
+  blk-gpios:
+    type: phandle-array
+    required: false
+  wake-gpios:
+    type: phandle-array
+    required: false
+  enable-gpios:
+    type: phandle-array
+    required: false
+  pwms:
+    type: phandle-array
+    required: false
+  pwm-names:
+    type: string
+    required: false

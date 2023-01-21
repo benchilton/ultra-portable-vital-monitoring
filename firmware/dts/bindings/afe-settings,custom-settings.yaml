@@ -1,0 +1,9 @@
+compatible: "afe-settings,custom-settings"
+description: "AFE Settings"
+properties:
+  afe-enable-gpios:
+    type: phandle-array
+    required: false
+  output-enable-gpios:
+    type: phandle-array
+    required: false

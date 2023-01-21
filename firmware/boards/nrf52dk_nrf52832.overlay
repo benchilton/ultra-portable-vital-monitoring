@@ -1,0 +1,41 @@
+/*This is a quick demo of how overlays work*/
+
+/* Pop the AD-496X on spi1 */
+&spi1 {
+
+     cs-gpios = <&gpio0 16 GPIO_ACTIVE_LOW>; /* D10 */
+
+     ad469x_spi: spi-dev-ad469x@0 {
+
+             /*compatible = "...";*/
+             label = "AD469x";
+             /* reg is the chip select number, if needed;
+              * If present, it must match the node's unit address. */
+             reg = <0>;
+             /*Define which GPIO's are to be used as CS for the ad469*/
+
+             /* Configure other SPI device properties as needed.
+              * Find your device's DT binding for details. */
+     };
+
+};
+
+&gpio0 {
+
+    ad469x_gpio: gpio_dev_ad469x {
+
+        convert: adc-convert {
+
+            gpios = <&gpio0 16 ( GPIO_ACTIVE_LOW)>;
+            label = "AD469x convert GPIO";
+
+        };
+        busy: adc-busy {
+
+            gpios = <&gpio0 16 (GPIO_ACTIVE_LOW)>;
+            label = "AD469x busy GPIO";
+
+        };
+    };
+
+};

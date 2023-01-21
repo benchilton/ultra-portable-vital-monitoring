@@ -1,0 +1,58 @@
+
+/*Overlays to the SPI:*/
+&spi1 {
+	compatible = "nordic,nrf-spi";
+	status = "okay";
+
+    cs-gpios = <&gpio0 28 GPIO_ACTIVE_LOW>; /* D10 */
+
+    ad469x: spi-dev-ad469x@0 {
+
+        label = "AD469x";
+        /* reg is the chip select number, if needed;
+         * If present, it must match the node's unit address. */
+        reg = <0>;
+        properties {
+
+            spi-frequency-reg = <4000000>;
+            spi-frequency-cnv = <4000000>;
+            cs-delay          = <0>;
+
+            adc-reset-gpios   = <&gpio0 3 GPIO_ACTIVE_HIGH>;
+            adc-busy-gpios    = <&gpio0 4 GPIO_ACTIVE_HIGH>;
+            adc-convert-gpios = <&gpio0 28 GPIO_ACTIVE_HIGH>;
+
+        };
+
+    };
+
+};
+
+
+/ {
+    settings {
+
+        ad469x_settings: ad469x-custom-settings {
+            compatible   = "ad469x-sequencer,settings";  /* <--------- */
+            /*Use this to set default settings for channels in the ADC */
+            adc-channels =
+            <VITAL_MONITOR_CHANNEL_TEMPERATURE    AD469X_OSR_64 AD469X_PAIRED_COM >,
+            <VITAL_MONITOR_CHANNEL_HEART_RATE_1   AD469X_OSR_1  AD469X_PAIRED_REFGND >,
+            <VITAL_MONITOR_CHANNEL_HEART_RATE_2   AD469X_OSR_1  AD469X_PAIRED_REFGND >,
+            <VITAL_MONITOR_CHANNEL_BLOOD_OXYGEN_1 AD469X_OSR_1  AD469X_PAIRED_REFGND >,
+            <VITAL_MONITOR_CHANNEL_BLOOD_OXYGEN_2 AD469X_OSR_1  AD469X_PAIRED_REFGND >,
+            <VITAL_MONITOR_CHANNEL_RESPIRATION    AD469X_OSR_1  AD469X_PAIRED_REFGND >,
+            <VITAL_MONITOR_CHANNEL_ACCELERATION_X AD469X_OSR_1  AD469X_PAIRED_COM >,
+            <VITAL_MONITOR_CHANNEL_ACCELERATION_Y AD469X_OSR_1  AD469X_PAIRED_COM >,
+            <VITAL_MONITOR_CHANNEL_ACCELERATION_Z AD469X_OSR_1  AD469X_PAIRED_COM >;
+
+            /*Use this to set the default advanced sequencer channels
+             The order of numbers here start at slot 1*/
+            adv-sequencer-slots =   <VITAL_MONITOR_CHANNEL_TEMPERATURE VITAL_MONITOR_CHANNEL_RESPIRATION
+                                     VITAL_MONITOR_CHANNEL_ACCELERATION_X VITAL_MONITOR_CHANNEL_ACCELERATION_Y
+                                     VITAL_MONITOR_CHANNEL_ACCELERATION_Z VITAL_MONITOR_CHANNEL_HEART_RATE_1
+                                     /*VITAL_MONITOR_CHANNEL_HEART_RATE_2*/>;
+        };
+    };
+
+};

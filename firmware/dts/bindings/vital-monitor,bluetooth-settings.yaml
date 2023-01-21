@@ -1,0 +1,6 @@
+compatible: "vital-monitor,bluetooth-settings"
+description: "BLE settings"
+properties:
+  adv-name:
+    type: string
+    required: true

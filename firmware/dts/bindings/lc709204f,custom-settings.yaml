@@ -1,0 +1,13 @@
+compatible: "lc709204f,custom-settings"
+description: "lc709204f custom-settings"
+properties:
+  i2c-frequency:
+    type: int
+    required: true
+  slave-address:
+    type: int
+    required: false
+
+#  alarm-b-gpios:
+#    type: phandle-array
+#    required: true

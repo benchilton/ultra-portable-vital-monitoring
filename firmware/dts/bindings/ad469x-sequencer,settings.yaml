@@ -1,0 +1,9 @@
+compatible: "ad469x-sequencer,settings"
+description: "AD469X sequencer settings"
+properties:
+  adc-channels:
+    type: array
+    required: false
+  adv-sequencer-slots:
+    type: array
+    required: false
